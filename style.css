@@ -489,6 +489,10 @@ h1 {
 
 .x-embed-shell {
   margin-top: 0.8rem;
+  padding: 0.72rem;
+  display: grid;
+  align-content: start;
+  gap: 0.72rem;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(151, 191, 255, 0.26);
@@ -496,8 +500,81 @@ h1 {
   min-height: 620px;
 }
 
+.x-embed-loading {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(151, 191, 255, 0.3);
+  background: rgba(34, 84, 180, 0.24);
+  color: #cfe8ff;
+  padding: 0.36rem 0.62rem;
+  font-size: 0.84rem;
+  letter-spacing: 0.03em;
+}
+
+.x-embed-shell[data-feed-state="loading"] .twitter-timeline {
+  opacity: 0.001;
+  pointer-events: none;
+  max-height: 1px;
+  overflow: hidden;
+}
+
 .x-embed-shell .twitter-timeline {
   width: 100% !important;
+}
+
+.x-embed-shell[data-feed-state="fallback"] .twitter-timeline {
+  display: none !important;
+}
+
+.x-embed-fallback {
+  display: grid;
+  gap: 0.68rem;
+}
+
+.x-embed-fallback p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.x-fallback-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.62rem;
+}
+
+.x-fallback-list li {
+  border: 1px solid rgba(151, 191, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(8, 23, 53, 0.55);
+}
+
+.x-fallback-list a {
+  display: block;
+  text-decoration: none;
+  color: #d8efff;
+  font-weight: 500;
+  padding: 0.72rem 0.8rem 0.45rem;
+}
+
+.x-fallback-list a:hover {
+  color: #ffffff;
+}
+
+.x-fallback-list time {
+  display: block;
+  padding: 0 0.8rem 0.72rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.x-fallback-link {
+  width: fit-content;
 }
 
 .embed-note {
