@@ -165,6 +165,21 @@ main {
   padding: clamp(1.2rem, 4vw, 2rem);
 }
 
+.streams-hero-logo {
+  display: block;
+  width: min(220px, 58vw);
+  height: auto;
+  padding: 0.42rem 0.76rem;
+  margin: 0.65rem 0 0.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(140, 255, 190, 0.34);
+  background: linear-gradient(140deg, rgba(124, 255, 176, 0.24), rgba(111, 240, 255, 0.14));
+  box-shadow:
+    inset 0 0 0 1px rgba(191, 255, 218, 0.16),
+    0 9px 20px rgba(5, 18, 36, 0.34);
+  filter: drop-shadow(0 6px 16px rgba(4, 14, 34, 0.45));
+}
+
 .sort-panel {
   display: grid;
   align-content: start;
@@ -241,6 +256,104 @@ main {
 
 .video-meta a:hover {
   color: var(--text);
+}
+
+.watch-profile-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.kick-profile-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(107, 244, 153, 0.34);
+  background:
+    radial-gradient(1200px 260px at 88% -28%, rgba(132, 255, 158, 0.18), transparent 62%),
+    linear-gradient(165deg, rgba(8, 33, 25, 0.86), rgba(7, 22, 46, 0.68));
+  box-shadow:
+    inset 0 0 0 1px rgba(136, 255, 177, 0.12),
+    0 18px 36px rgba(6, 22, 20, 0.38);
+}
+
+.kick-profile-logo {
+  width: 104px;
+  height: auto;
+  display: block;
+  margin-bottom: 0.82rem;
+  border-radius: 9px;
+  border: 1px solid rgba(144, 255, 182, 0.36);
+  box-shadow: 0 7px 16px rgba(7, 20, 17, 0.4);
+}
+
+.kick-profile-card .kick-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.82rem;
+}
+
+.kick-profile-meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.kick-profile-meta h2 {
+  margin: 0;
+  color: #e9fff1;
+  font-size: 1.35rem;
+}
+
+.kick-follow-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.45rem 0.92rem;
+  border-radius: 999px;
+  border: 1px solid rgba(156, 255, 122, 0.72);
+  background: linear-gradient(135deg, #67f62b, #95ff56);
+  color: #0a170f;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(236, 255, 231, 0.62),
+    0 8px 18px rgba(53, 169, 66, 0.38);
+  transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+}
+
+.kick-follow-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(236, 255, 231, 0.72),
+    0 10px 20px rgba(53, 169, 66, 0.44);
+}
+
+.kick-profile-card .profile-avatar {
+  border-color: rgba(123, 255, 176, 0.5);
+  background: linear-gradient(140deg, rgba(52, 194, 111, 0.34), rgba(66, 218, 255, 0.2));
+}
+
+.kick-profile-card .profile-handle {
+  color: #8ff5bc;
+}
+
+.kick-profile-card .profile-copy {
+  color: #d2ffe0;
+}
+
+.kick-profile-card .btn.primary {
+  color: #e9fff1;
+  border: 1px solid rgba(123, 255, 176, 0.4);
+  background: linear-gradient(135deg, rgba(23, 82, 48, 0.9), rgba(10, 40, 31, 0.92));
+}
+
+.kick-profile-card .btn.primary:hover {
+  border-color: rgba(159, 255, 198, 0.62);
+  background: linear-gradient(135deg, rgba(29, 97, 57, 0.92), rgba(12, 46, 35, 0.94));
 }
 
 .glass {
@@ -470,121 +583,226 @@ h1 {
   flex-wrap: wrap;
 }
 
-.posts-layout {
+.posts-profile-layout {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.9rem;
 }
 
-.x-embed-card,
+.posts-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+.posts-layout .rss-card {
+  width: 100%;
+}
+
+.profile-card,
 .rss-card {
   padding: 1.1rem;
 }
 
-.x-embed-card h2,
+.profile-card h2,
 .rss-card h2 {
   margin: 0;
   font-size: 1.3rem;
 }
 
-.x-embed-shell {
-  margin-top: 0.8rem;
-  padding: 0.72rem;
-  display: grid;
-  align-content: start;
-  gap: 0.72rem;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(151, 191, 255, 0.26);
-  background: rgba(5, 14, 34, 0.55);
-  min-height: 620px;
-}
-
-.x-embed-loading {
-  margin: 0;
+.profile-badge {
   display: inline-flex;
   align-items: center;
-  width: fit-content;
+  margin-bottom: 0.75rem;
+  padding: 0.32rem 0.62rem;
   border-radius: 999px;
-  border: 1px solid rgba(151, 191, 255, 0.3);
-  background: rgba(34, 84, 180, 0.24);
-  color: #cfe8ff;
-  padding: 0.36rem 0.62rem;
-  font-size: 0.84rem;
-  letter-spacing: 0.03em;
+  border: 1px solid rgba(151, 191, 255, 0.42);
+  background: rgba(52, 122, 255, 0.2);
+  color: #cce8ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
-.x-embed-shell[data-feed-state="loading"] .twitter-timeline {
-  opacity: 0.001;
-  pointer-events: none;
-  max-height: 1px;
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.x-profile-head {
+  display: flex;
+  align-items: center;
+}
+
+.x-profile-meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.x-follow-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(173, 214, 255, 0.45);
+  background: linear-gradient(145deg, rgba(9, 13, 22, 0.95), rgba(25, 36, 56, 0.9));
+  color: #eef7ff;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 0 0 1px rgba(220, 238, 255, 0.14),
+    0 8px 18px rgba(3, 10, 25, 0.36);
+  transition: transform 180ms ease, border-color 180ms ease, filter 180ms ease;
+}
+
+.x-follow-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(194, 228, 255, 0.66);
+  filter: brightness(1.06);
+}
+
+.instagram-profile-card {
+  position: relative;
   overflow: hidden;
+  border-color: rgba(255, 154, 120, 0.34);
+  background:
+    radial-gradient(1100px 250px at 86% -20%, rgba(255, 173, 109, 0.2), transparent 62%),
+    linear-gradient(165deg, rgba(53, 16, 64, 0.86), rgba(27, 20, 72, 0.7));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 193, 145, 0.12),
+    0 18px 36px rgba(32, 14, 52, 0.4);
 }
 
-.x-embed-shell .twitter-timeline {
-  width: 100% !important;
+.instagram-profile-logo {
+  width: 104px;
+  height: auto;
+  display: block;
+  margin-bottom: 0.82rem;
+  box-shadow: 0 7px 16px rgba(25, 8, 39, 0.44);
 }
 
-.x-embed-shell[data-feed-state="fallback"] .twitter-timeline {
-  display: none !important;
+.instagram-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.82rem;
 }
 
-.x-embed-fallback {
-  display: grid;
-  gap: 0.68rem;
+.instagram-profile-meta {
+  min-width: 0;
+  flex: 1;
 }
 
-.x-embed-fallback p {
+.instagram-profile-meta h2 {
   margin: 0;
+  color: #ffe9f8;
+  font-size: 1.35rem;
+}
+
+.instagram-follow-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.45rem 0.92rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 200, 165, 0.62);
+  background: linear-gradient(135deg, #ff804c, #ff4da0 48%, #9c5dff);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 210, 0.48),
+    0 9px 20px rgba(186, 68, 128, 0.42);
+  transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+}
+
+.instagram-follow-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 219, 0.62),
+    0 11px 22px rgba(186, 68, 128, 0.5);
+}
+
+.instagram-profile-card .profile-avatar {
+  border-color: rgba(255, 187, 157, 0.5);
+  background: linear-gradient(140deg, rgba(255, 140, 96, 0.35), rgba(175, 102, 255, 0.25));
+}
+
+.instagram-profile-card .profile-handle {
+  color: #ffbfdb;
+}
+
+.instagram-profile-card .profile-copy {
+  color: #ffe2f4;
+}
+
+.instagram-profile-card .btn.primary {
+  color: #fff4fb;
+  border: 1px solid rgba(255, 185, 146, 0.44);
+  background: linear-gradient(135deg, rgba(120, 45, 114, 0.9), rgba(78, 33, 128, 0.92));
+}
+
+.instagram-profile-card .btn.primary:hover {
+  border-color: rgba(255, 206, 170, 0.6);
+  background: linear-gradient(135deg, rgba(136, 53, 128, 0.92), rgba(90, 39, 143, 0.94));
+}
+
+.profile-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-family: "Syne", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(140deg, rgba(83, 150, 255, 0.26), rgba(112, 229, 255, 0.16));
+  border: 1px solid rgba(160, 202, 255, 0.44);
+  color: #e9f8ff;
+}
+
+.profile-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-handle {
+  margin: 0.25rem 0 0;
   color: var(--muted);
   font-size: 0.92rem;
 }
 
-.x-fallback-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
+.profile-copy {
+  margin: 0.85rem 0 0;
+  color: #d7ebff;
+}
+
+.profile-actions {
+  margin-top: 0.9rem;
+  display: flex;
   gap: 0.62rem;
+  flex-wrap: wrap;
 }
 
-.x-fallback-list li {
-  border: 1px solid rgba(151, 191, 255, 0.22);
-  border-radius: 12px;
-  background: rgba(8, 23, 53, 0.55);
-}
-
-.x-fallback-list a {
-  display: block;
-  text-decoration: none;
-  color: #d8efff;
-  font-weight: 500;
-  padding: 0.72rem 0.8rem 0.45rem;
-}
-
-.x-fallback-list a:hover {
-  color: #ffffff;
-}
-
-.x-fallback-list time {
-  display: block;
-  padding: 0 0.8rem 0.72rem;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.x-fallback-link {
-  width: fit-content;
-}
-
-.embed-note {
+.profile-note {
   margin: 0.75rem 0 0;
   color: var(--muted);
-  font-size: 0.93rem;
-}
-
-.embed-note a {
-  color: #8cd7ff;
+  font-size: 0.9rem;
 }
 
 .rss-card {
@@ -776,11 +994,19 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .watch-profile-layout {
+    grid-template-columns: 1fr;
+  }
+
   .card-grid {
     grid-template-columns: 1fr;
   }
 
   .posts-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .posts-profile-layout {
     grid-template-columns: 1fr;
   }
 
