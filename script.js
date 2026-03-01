@@ -9,9 +9,12 @@ const xFeedEmbed = document.querySelector('[data-x-feed-embed]');
 const xFeedLoading = document.querySelector('[data-x-feed-loading]');
 const xFeedFallback = document.querySelector('[data-x-feed-fallback]');
 const xFeedFallbackList = document.querySelector('[data-x-feed-fallback-list]');
+const xFeedFallbackReason = document.querySelector('[data-x-feed-fallback-reason]');
 const rssList = document.querySelector('.rss-list');
 
 const X_WIDGETS_SCRIPT_SRC = 'https://platform.twitter.com/widgets.js';
+const X_FEED_COOLDOWN_STORAGE_KEY = 'forza:x-feed-cooldown-until';
+const X_FEED_COOLDOWN_MS = 15 * 60 * 1000;
 
 const stars = Array.from({ length: 70 }, () => ({
   x: Math.random(),
@@ -47,12 +50,63 @@ function setXFeedState(state) {
   }
 }
 
+function getXFeedCooldownUntil() {
+  try {
+    const rawUntil = window.localStorage.getItem(X_FEED_COOLDOWN_STORAGE_KEY);
+    const parsedUntil = Number(rawUntil);
+
+    if (!Number.isFinite(parsedUntil) || parsedUntil <= 0) {
+      return 0;
+    }
+
+    return parsedUntil;
+  } catch {
+    return 0;
+  }
+}
+
+function isXFeedCooldownActive() {
+  return getXFeedCooldownUntil() > Date.now();
+}
+
+function setXFeedCooldown(untilMs = Date.now() + X_FEED_COOLDOWN_MS) {
+  try {
+    window.localStorage.setItem(X_FEED_COOLDOWN_STORAGE_KEY, String(untilMs));
+  } catch {
+    // Ignore localStorage write failures.
+  }
+}
+
+function clearXFeedCooldown() {
+  try {
+    window.localStorage.removeItem(X_FEED_COOLDOWN_STORAGE_KEY);
+  } catch {
+    // Ignore localStorage delete failures.
+  }
+}
+
+function setXFeedFallbackReason(reason) {
+  if (!xFeedFallbackReason) {
+    return;
+  }
+
+  const reasonTextByKey = {
+    file: 'Live embed is unavailable on local file URLs. Open this page over HTTP/HTTPS instead.',
+    cooldown: 'Live embed is temporarily paused because X rate-limited recent requests. Please retry in a few minutes.',
+    timeout: 'Live embed did not load in time and may be blocked or rate-limited by X.',
+    error: 'Live embed is currently unavailable and may be blocked or rate-limited by X.',
+  };
+
+  xFeedFallbackReason.textContent = reasonTextByKey[reason] || reasonTextByKey.error;
+  xFeedFallbackReason.hidden = false;
+}
+
 function populateXFallbackList() {
   if (!xFeedFallbackList || !rssList) {
     return;
   }
 
-  const sourceItems = Array.from(rssList.querySelectorAll('li')).slice(0, 5);
+  const sourceItems = Array.from(rssList.querySelectorAll('li')).slice(0, 3);
   if (!sourceItems.length) {
     return;
   }
@@ -63,8 +117,9 @@ function populateXFallbackList() {
   });
 }
 
-function showXFallback() {
+function showXFallback(reason = 'error') {
   setXFeedState('fallback');
+  setXFeedFallbackReason(reason);
 
   if (xFeedLoading) {
     xFeedLoading.hidden = true;
@@ -80,6 +135,11 @@ function showXEmbedReady() {
 
   if (xFeedLoading) {
     xFeedLoading.hidden = true;
+  }
+
+  if (xFeedFallbackReason) {
+    xFeedFallbackReason.hidden = true;
+    xFeedFallbackReason.textContent = '';
   }
 
   if (xFeedFallback) {
@@ -169,19 +229,43 @@ function initXFeed() {
   populateXFallbackList();
   setXFeedState('loading');
 
+  if (xFeedLoading) {
+    xFeedLoading.hidden = false;
+  }
+
+  if (xFeedFallbackReason) {
+    xFeedFallbackReason.hidden = true;
+    xFeedFallbackReason.textContent = '';
+  }
+
   let feedResolved = false;
 
-  const resolveFallback = () => {
+  const resolveFallback = ({ reason = 'error', persistCooldown = true } = {}) => {
     if (feedResolved) {
       return;
     }
 
     feedResolved = true;
-    showXFallback();
+
+    if (persistCooldown) {
+      setXFeedCooldown();
+    }
+
+    showXFallback(reason);
   };
 
+  if (window.location.protocol === 'file:') {
+    resolveFallback({ reason: 'file', persistCooldown: false });
+    return;
+  }
+
+  if (isXFeedCooldownActive()) {
+    resolveFallback({ reason: 'cooldown', persistCooldown: false });
+    return;
+  }
+
   const fallbackTimeout = window.setTimeout(() => {
-    resolveFallback();
+    resolveFallback({ reason: 'timeout' });
   }, 7000);
 
   loadXWidgetsScript()
@@ -196,11 +280,12 @@ function initXFeed() {
 
       feedResolved = true;
       window.clearTimeout(fallbackTimeout);
+      clearXFeedCooldown();
       showXEmbedReady();
     })
     .catch(() => {
       window.clearTimeout(fallbackTimeout);
-      resolveFallback();
+      resolveFallback({ reason: 'error' });
     });
 }
 
