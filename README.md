@@ -6,6 +6,7 @@ Static site for Forza, deployed from GitHub to Render.
 
 - `index.html` - Homepage
 - `watch.html` - Watch page
+- `donate.html` - Donation page (PayPal.Me support)
 - `style.css` - Shared styles
 - `script.js` - Homepage JS
 - `watch.js` - Watch page JS
@@ -26,6 +27,7 @@ Then open:
 
 - `http://localhost:8080/`
 - `http://localhost:8080/watch.html`
+- `http://localhost:8080/donate.html`
 
 ## Git workflow
 
