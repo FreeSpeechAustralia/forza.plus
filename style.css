@@ -23,6 +23,7 @@ body {
   background: var(--bg);
   overflow-x: hidden;
   position: relative;
+  min-height: 100dvh;
 }
 
 body::before {
@@ -461,7 +462,7 @@ h1 {
 }
 
 @media (max-width: 940px) {
-  .hero-grid {
+  .hero-content {
     grid-template-columns: 1fr;
   }
 
@@ -515,6 +516,10 @@ h1 {
 }
 
 @media (max-width: 700px) {
+  main {
+    padding-bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px));
+  }
+
   body::before {
     background-image: linear-gradient(160deg, rgba(3, 10, 27, 0.6), rgba(3, 10, 27, 0.4)), url("Branding/background-mobile.png");
     background-position: center top;
