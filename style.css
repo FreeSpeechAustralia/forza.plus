@@ -1090,32 +1090,6 @@ h1 {
   gap: 0.8rem;
 }
 
-.membership-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-}
-
-.membership-grid a {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 2.45rem;
-  text-decoration: none;
-  color: #d8efff;
-  border-radius: 12px;
-  border: 1px solid rgba(151, 191, 255, 0.33);
-  background: linear-gradient(145deg, rgba(42, 104, 236, 0.38), rgba(72, 197, 255, 0.2));
-  font-weight: 600;
-  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
-}
-
-.membership-grid a:hover {
-  border-color: rgba(180, 221, 255, 0.6);
-  background: linear-gradient(145deg, rgba(59, 124, 255, 0.42), rgba(88, 213, 255, 0.24));
-  transform: translateY(-1px);
-}
-
 .membership-note {
   margin: 0.8rem 0 0;
   color: var(--muted);
@@ -1405,10 +1379,6 @@ h1 {
   }
 
   .exclusive-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .membership-grid {
     grid-template-columns: 1fr;
   }
 
