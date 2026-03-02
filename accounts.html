@@ -54,15 +54,11 @@
           <label for="accountEmail">Account email</label>
           <input id="accountEmail" name="accountEmail" type="email" autocomplete="email" placeholder="demo@freespeechaustralia.org" required />
           <button class="btn primary" type="submit">Send sign-in link</button>
-          <label for="magicLinkToken">Magic-link token (optional manual verify)</label>
-          <input id="magicLinkToken" name="magicLinkToken" type="text" autocomplete="off" placeholder="Paste token from email link if needed" />
         </form>
         <div class="account-buttons">
-          <button id="verifyMagicLink" class="btn ghost" type="button">Verify token</button>
-          <button id="loadAccount" class="btn ghost" type="button">Load account</button>
           <button id="logoutSession" class="btn ghost" type="button">Log out</button>
         </div>
-        <p class="account-helper">Send a sign-in link first, then verify from your inbox or paste token manually.</p>
+        <p class="account-helper">Send a sign-in link, then open it from your inbox to complete sign-in.</p>
       </article>
 
       <article class="glass account-panel" aria-labelledby="status-title">
@@ -92,7 +88,7 @@
       </article>
     </section>
 
-    <section class="accounts-actions reveal" aria-labelledby="telegram-title">
+    <section id="telegramToolsSection" class="accounts-actions reveal" aria-labelledby="telegram-title" hidden>
       <article class="glass account-panel">
         <h2 id="telegram-title">Telegram access tools</h2>
         <p class="account-helper">Create a one-time link token, open the Telegram bot deep link, and we'll auto-check link status for about a minute.</p>
@@ -117,6 +113,6 @@
   </main>
 
   <script src="script.js?v=20260302-social-profiles"></script>
-  <script src="accounts.js?v=20260303-telegram-linking"></script>
+  <script src="accounts.js?v=20260303-signin-gated-telegram-tools"></script>
 </body>
 </html>

@@ -15,16 +15,14 @@ let telegramLinkPollInFlight = false;
 
 const accountLookupForm = document.getElementById('accountLookupForm');
 const accountEmailInput = document.getElementById('accountEmail');
-const magicLinkTokenInput = document.getElementById('magicLinkToken');
 const accountStatusPill = document.getElementById('accountStatusPill');
 const accountEmailValue = document.getElementById('accountEmailValue');
 const membershipTier = document.getElementById('membershipTier');
 const membershipStatus = document.getElementById('membershipStatus');
 const telegramStatus = document.getElementById('telegramStatus');
 const accountsMessage = document.getElementById('accountsMessage');
-const verifyMagicLinkButton = document.getElementById('verifyMagicLink');
-const loadAccountButton = document.getElementById('loadAccount');
 const logoutSessionButton = document.getElementById('logoutSession');
+const telegramToolsSection = document.getElementById('telegramToolsSection');
 
 const createTelegramLinkButton = document.getElementById('createTelegramLink');
 const unlinkTelegramButton = document.getElementById('unlinkTelegram');
@@ -47,8 +45,6 @@ function setLoading(isLoading, submitLabel = 'Send sign-in link') {
   const submitButton = accountLookupForm.querySelector('button[type="submit"]');
   submitButton.textContent = label;
   submitButton.disabled = isLoading;
-  verifyMagicLinkButton.disabled = isLoading;
-  loadAccountButton.disabled = isLoading;
   logoutSessionButton.disabled = isLoading;
   createTelegramLinkButton.disabled = isLoading;
   unlinkTelegramButton.disabled = isLoading;
@@ -65,6 +61,18 @@ function clearTelegramTokenResult() {
   telegramDeepLink.removeAttribute('href');
   telegramDeepLink.textContent = 'Open bot link';
   telegramExpiry.textContent = '-';
+}
+
+function setTelegramActionButtons(isLinked) {
+  const linked = Boolean(isLinked);
+  createTelegramLinkButton.hidden = linked;
+  unlinkTelegramButton.hidden = !linked;
+}
+
+function hideTelegramToolsForSignedOutState() {
+  telegramToolsSection.hidden = true;
+  setTelegramActionButtons(false);
+  clearTelegramTokenResult();
 }
 
 function stopTelegramLinkPolling() {
@@ -84,7 +92,7 @@ async function pollTelegramLinkStatus() {
 
   if (Date.now() >= telegramLinkPollStopAt) {
     stopTelegramLinkPolling();
-    setMessage('Still waiting for Telegram confirmation. If you already completed it, click "Load account".', 'info');
+    setMessage('Still waiting for Telegram confirmation. Try opening the Telegram deep link again if needed.', 'info');
     return;
   }
 
@@ -110,6 +118,7 @@ async function pollTelegramLinkStatus() {
     const normalizedMessage = String(error.message || '').toLowerCase();
     if (normalizedMessage.includes('session') || normalizedMessage.includes('authentication')) {
       stopTelegramLinkPolling();
+      hideTelegramToolsForSignedOutState();
       setStatusPill('Signed out', 'neutral');
       setMessage('Session expired while checking Telegram link. Sign in again and retry.', 'info');
       return;
@@ -220,14 +229,18 @@ async function requestJson(path, options = {}) {
 function renderAccount(account) {
   const membership = account.membership || {};
   const telegram = account.telegram || { linked: false };
+  const linked = Boolean(telegram.linked);
 
   accountEmailValue.textContent = account.user.email || '-';
   membershipTier.textContent = membership.tier || 'No tier';
   membershipStatus.textContent = membership.status || 'No membership';
+  telegramToolsSection.hidden = false;
+  setTelegramActionButtons(linked);
 
-  if (telegram.linked) {
+  if (linked) {
     const username = telegram.telegramUsername ? `@${telegram.telegramUsername}` : telegram.telegramUserId;
     telegramStatus.textContent = `Linked (${username})`;
+    clearTelegramTokenResult();
     setStatusPill('Linked', 'success');
   } else {
     telegramStatus.textContent = 'Not linked';
@@ -247,8 +260,8 @@ async function sendMagicLink() {
   localStorage.setItem(STORAGE_EMAIL_KEY, email);
   clearSessionToken();
   clearAccountView();
+  hideTelegramToolsForSignedOutState();
   setLoading(true, 'Send sign-in link');
-  clearTelegramTokenResult();
 
   try {
     await requestJson('/api/v1/auth/email/start', {
@@ -268,10 +281,10 @@ async function sendMagicLink() {
 }
 
 async function verifyMagicLink(tokenOverride) {
-  const token = String(tokenOverride || magicLinkTokenInput.value || '').trim();
+  const token = String(tokenOverride || '').trim();
   if (!token) {
     setStatusPill('Error', 'error');
-    setMessage('Paste a magic-link token or open accounts page from your email link.', 'error');
+    setMessage('Sign-in token missing. Open the latest sign-in link from your email.', 'error');
     return;
   }
 
@@ -287,7 +300,6 @@ async function verifyMagicLink(tokenOverride) {
 
     setSessionToken(payload.session.token);
     renderAccount(payload.account);
-    magicLinkTokenInput.value = '';
     removeTokenQueryParam();
 
     if (payload.createdAccount) {
@@ -308,8 +320,9 @@ async function verifyMagicLink(tokenOverride) {
 async function loadAccount() {
   stopTelegramLinkPolling();
   if (!getSessionToken()) {
+    hideTelegramToolsForSignedOutState();
     setStatusPill('Signed out', 'neutral');
-    setMessage('Send and verify a magic link before loading account details.', 'info');
+    setMessage('Send a sign-in link and open it from your email to continue.', 'info');
     return;
   }
 
@@ -321,6 +334,13 @@ async function loadAccount() {
     renderAccount(payload.account);
     setMessage(`Loaded account for ${payload.account.user.email}`, 'success');
   } catch (error) {
+    if (!getSessionToken()) {
+      hideTelegramToolsForSignedOutState();
+      setStatusPill('Signed out', 'neutral');
+      setMessage('Session expired. Send a new sign-in link.', 'info');
+      return;
+    }
+
     setStatusPill('Error', 'error');
     setMessage(error.message, 'error');
   } finally {
@@ -346,8 +366,8 @@ async function logoutSession() {
     logoutError = error;
   } finally {
     clearSessionToken();
-    clearTelegramTokenResult();
     clearAccountView();
+    hideTelegramToolsForSignedOutState();
 
     if (logoutError) {
       setStatusPill('Signed out', 'neutral');
@@ -389,6 +409,7 @@ async function createTelegramLinkToken() {
     startTelegramLinkPolling(linkToken.expiresAt);
   } catch (error) {
     if (error.message.toLowerCase().includes('session')) {
+      hideTelegramToolsForSignedOutState();
       setStatusPill('Signed out', 'neutral');
     }
     setMessage(error.message, 'error');
@@ -411,6 +432,11 @@ async function unlinkTelegram() {
     clearTelegramTokenResult();
     await loadAccount();
   } catch (error) {
+    if (error.message.toLowerCase().includes('session')) {
+      hideTelegramToolsForSignedOutState();
+      setStatusPill('Signed out', 'neutral');
+    }
+
     setMessage(error.message, 'error');
   } finally {
     setLoading(false, 'Send sign-in link');
@@ -420,14 +446,6 @@ async function unlinkTelegram() {
 accountLookupForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   await sendMagicLink();
-});
-
-verifyMagicLinkButton.addEventListener('click', async () => {
-  await verifyMagicLink();
-});
-
-loadAccountButton.addEventListener('click', async () => {
-  await loadAccount();
 });
 
 logoutSessionButton.addEventListener('click', async () => {
@@ -442,11 +460,10 @@ unlinkTelegramButton.addEventListener('click', unlinkTelegram);
   const savedEmail = localStorage.getItem(STORAGE_EMAIL_KEY);
   accountEmailInput.value = savedEmail || accountEmailInput.placeholder || 'demo@freespeechaustralia.org';
   clearAccountView();
-  clearTelegramTokenResult();
+  hideTelegramToolsForSignedOutState();
 
   const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
   if (tokenFromUrl) {
-    magicLinkTokenInput.value = tokenFromUrl;
     setStatusPill('Verifying', 'neutral');
     verifyMagicLink(tokenFromUrl);
     return;
