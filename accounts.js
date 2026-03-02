@@ -6,6 +6,12 @@ const API_BASE_URL = (
 
 const STORAGE_EMAIL_KEY = 'forza.accounts.email';
 const STORAGE_SESSION_KEY = 'forza.accounts.sessionToken';
+const TELEGRAM_LINK_POLL_INTERVAL_MS = 4000;
+const TELEGRAM_LINK_POLL_MAX_DURATION_MS = 60000;
+
+let telegramLinkPollTimeoutId = null;
+let telegramLinkPollStopAt = 0;
+let telegramLinkPollInFlight = false;
 
 const accountLookupForm = document.getElementById('accountLookupForm');
 const accountEmailInput = document.getElementById('accountEmail');
@@ -59,6 +65,76 @@ function clearTelegramTokenResult() {
   telegramDeepLink.removeAttribute('href');
   telegramDeepLink.textContent = 'Open bot link';
   telegramExpiry.textContent = '-';
+}
+
+function stopTelegramLinkPolling() {
+  if (telegramLinkPollTimeoutId) {
+    window.clearTimeout(telegramLinkPollTimeoutId);
+  }
+
+  telegramLinkPollTimeoutId = null;
+  telegramLinkPollStopAt = 0;
+  telegramLinkPollInFlight = false;
+}
+
+async function pollTelegramLinkStatus() {
+  if (!telegramLinkPollTimeoutId) {
+    return;
+  }
+
+  if (Date.now() >= telegramLinkPollStopAt) {
+    stopTelegramLinkPolling();
+    setMessage('Still waiting for Telegram confirmation. If you already completed it, click "Load account".', 'info');
+    return;
+  }
+
+  if (telegramLinkPollInFlight) {
+    telegramLinkPollTimeoutId = window.setTimeout(pollTelegramLinkStatus, TELEGRAM_LINK_POLL_INTERVAL_MS);
+    return;
+  }
+
+  telegramLinkPollInFlight = true;
+
+  try {
+    const payload = await requestJson('/api/v1/accounts/me');
+    const telegram = payload && payload.account ? payload.account.telegram : null;
+
+    if (telegram && telegram.linked) {
+      renderAccount(payload.account);
+      const identity = telegram.telegramUsername ? `@${telegram.telegramUsername}` : telegram.telegramUserId;
+      setMessage(`Telegram linked successfully (${identity}).`, 'success');
+      stopTelegramLinkPolling();
+      return;
+    }
+  } catch (error) {
+    const normalizedMessage = String(error.message || '').toLowerCase();
+    if (normalizedMessage.includes('session') || normalizedMessage.includes('authentication')) {
+      stopTelegramLinkPolling();
+      setStatusPill('Signed out', 'neutral');
+      setMessage('Session expired while checking Telegram link. Sign in again and retry.', 'info');
+      return;
+    }
+  } finally {
+    telegramLinkPollInFlight = false;
+  }
+
+  if (!telegramLinkPollStopAt) {
+    return;
+  }
+
+  telegramLinkPollTimeoutId = window.setTimeout(pollTelegramLinkStatus, TELEGRAM_LINK_POLL_INTERVAL_MS);
+}
+
+function startTelegramLinkPolling(expiresAtInput) {
+  stopTelegramLinkPolling();
+
+  const tokenExpiryMs = new Date(expiresAtInput).getTime();
+  const fallbackStopAt = Date.now() + TELEGRAM_LINK_POLL_MAX_DURATION_MS;
+  telegramLinkPollStopAt = Number.isFinite(tokenExpiryMs)
+    ? Math.min(tokenExpiryMs, fallbackStopAt)
+    : fallbackStopAt;
+
+  telegramLinkPollTimeoutId = window.setTimeout(pollTelegramLinkStatus, TELEGRAM_LINK_POLL_INTERVAL_MS);
 }
 
 function clearAccountView() {
@@ -167,6 +243,7 @@ async function sendMagicLink() {
     return;
   }
 
+  stopTelegramLinkPolling();
   localStorage.setItem(STORAGE_EMAIL_KEY, email);
   clearSessionToken();
   clearAccountView();
@@ -198,6 +275,7 @@ async function verifyMagicLink(tokenOverride) {
     return;
   }
 
+  stopTelegramLinkPolling();
   setLoading(true, 'Send sign-in link');
 
   try {
@@ -228,6 +306,7 @@ async function verifyMagicLink(tokenOverride) {
 }
 
 async function loadAccount() {
+  stopTelegramLinkPolling();
   if (!getSessionToken()) {
     setStatusPill('Signed out', 'neutral');
     setMessage('Send and verify a magic link before loading account details.', 'info');
@@ -253,6 +332,7 @@ async function logoutSession() {
   const hasSession = Boolean(getSessionToken());
   let logoutError = null;
 
+  stopTelegramLinkPolling();
   setLoading(true, 'Send sign-in link');
 
   try {
@@ -282,6 +362,7 @@ async function logoutSession() {
 }
 
 async function createTelegramLinkToken() {
+  stopTelegramLinkPolling();
   setLoading(true, 'Send sign-in link');
 
   try {
@@ -304,7 +385,8 @@ async function createTelegramLinkToken() {
     telegramExpiry.textContent = new Date(linkToken.expiresAt).toLocaleString();
     telegramLinkResult.hidden = false;
 
-    setMessage('Telegram link token created. Open the deep link to continue.', 'success');
+    setMessage('Telegram link token created. Open the deep link in Telegram; we will auto-check link status for about a minute.', 'success');
+    startTelegramLinkPolling(linkToken.expiresAt);
   } catch (error) {
     if (error.message.toLowerCase().includes('session')) {
       setStatusPill('Signed out', 'neutral');
@@ -316,6 +398,7 @@ async function createTelegramLinkToken() {
 }
 
 async function unlinkTelegram() {
+  stopTelegramLinkPolling();
   setLoading(true, 'Send sign-in link');
 
   try {
@@ -355,6 +438,7 @@ createTelegramLinkButton.addEventListener('click', createTelegramLinkToken);
 unlinkTelegramButton.addEventListener('click', unlinkTelegram);
 
 (function init() {
+  stopTelegramLinkPolling();
   const savedEmail = localStorage.getItem(STORAGE_EMAIL_KEY);
   accountEmailInput.value = savedEmail || accountEmailInput.placeholder || 'demo@freespeechaustralia.org';
   clearAccountView();
