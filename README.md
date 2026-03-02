@@ -8,8 +8,10 @@ Static site for Forza, deployed from GitHub to Render.
 - `watch.html` - Watch page
 - `posts.html` - Posts page (X profile + timeline)
 - `donate.html` - Donation page (PayPal.Me support)
+- `accounts.html` - Accounts page (dynamic API-backed account status)
 - `style.css` - Shared styles
 - `script.js` - Homepage JS
+- `accounts.js` - Accounts page API integration script
 - `watch.js` - Watch page JS
 - `Branding/` - Image assets (`logo.png`, `background.png`, `background-mobile.png`)
 - `render.yaml` - Render Blueprint config
@@ -30,6 +32,7 @@ Then open:
 - `http://localhost:8080/watch.html`
 - `http://localhost:8080/posts.html`
 - `http://localhost:8080/donate.html`
+- `http://localhost:8080/accounts.html`
 
 ## Git workflow
 

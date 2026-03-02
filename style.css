@@ -1122,6 +1122,216 @@ h1 {
   font-size: 0.83rem;
 }
 
+.accounts-main {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.accounts-hero {
+  padding: clamp(1.2rem, 4vw, 2.2rem);
+}
+
+.accounts-hero h1 {
+  max-width: 18ch;
+}
+
+.accounts-note {
+  margin: 1rem 0 0;
+  font-size: 1.03rem;
+  color: #d5ecff;
+}
+
+.accounts-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 0.9rem;
+}
+
+.accounts-actions {
+  display: grid;
+}
+
+.account-panel {
+  padding: 1.1rem;
+}
+
+.account-panel h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.account-lookup-form {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.account-lookup-form label {
+  color: #8cd7ff;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.account-lookup-form input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(7, 17, 39, 0.9);
+  color: var(--text);
+  padding: 0.68rem 0.72rem;
+  font: 500 1rem/1.1 "Outfit", sans-serif;
+}
+
+.account-lookup-form input:focus {
+  outline: none;
+  border-color: rgba(145, 207, 255, 0.72);
+  box-shadow: 0 0 0 2px rgba(84, 175, 255, 0.2);
+}
+
+.account-helper {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.account-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.82rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.32rem 0.66rem;
+  border-radius: 999px;
+  border: 1px solid rgba(151, 191, 255, 0.42);
+  background: rgba(52, 122, 255, 0.2);
+  color: #cce8ff;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.status-pill[data-tone="success"] {
+  border-color: rgba(132, 255, 175, 0.52);
+  background: rgba(44, 170, 108, 0.28);
+  color: #d6ffe6;
+}
+
+.status-pill[data-tone="error"] {
+  border-color: rgba(255, 165, 165, 0.56);
+  background: rgba(184, 46, 46, 0.3);
+  color: #ffe0e0;
+}
+
+.account-facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.account-facts div {
+  margin: 0;
+  padding: 0.62rem 0.7rem;
+  border-radius: 12px;
+  border: 1px solid rgba(151, 191, 255, 0.24);
+  background: rgba(8, 17, 37, 0.52);
+}
+
+.account-facts dt {
+  margin: 0;
+  color: #8cd7ff;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.account-facts dd {
+  margin: 0.38rem 0 0;
+  color: #e6f3ff;
+  font-size: 0.98rem;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.account-buttons {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.62rem;
+  flex-wrap: wrap;
+}
+
+.account-buttons .btn {
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.account-buttons .btn.ghost {
+  border-color: var(--line);
+}
+
+.account-buttons .btn:disabled,
+.account-lookup-form .btn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.token-box {
+  margin-top: 0.85rem;
+  border-radius: 14px;
+  border: 1px dashed rgba(151, 191, 255, 0.4);
+  background: rgba(8, 22, 52, 0.52);
+  padding: 0.75rem;
+}
+
+.token-box p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.token-box p + p {
+  margin-top: 0.5rem;
+}
+
+.token-box code {
+  display: inline-block;
+  padding: 0.16rem 0.3rem;
+  border-radius: 6px;
+  background: rgba(31, 64, 125, 0.46);
+  color: #d8eeff;
+  font-size: 0.82rem;
+}
+
+.token-box a {
+  color: #8cd7ff;
+  word-break: break-all;
+}
+
+.account-feedback-panel {
+  min-height: 92px;
+}
+
+.account-message {
+  margin: 0.72rem 0 0;
+  color: var(--muted);
+}
+
+.account-message[data-tone="success"] {
+  color: #c6ffe1;
+}
+
+.account-message[data-tone="error"] {
+  color: #ffc8c8;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(16px);
@@ -1202,6 +1412,14 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .accounts-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-facts {
+    grid-template-columns: 1fr;
+  }
+
   .header-shell {
     grid-template-columns: auto auto 1fr;
   }
@@ -1259,5 +1477,15 @@ h1 {
 
   #nebula-canvas {
     opacity: 0.7;
+  }
+
+  .account-panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .account-buttons .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
