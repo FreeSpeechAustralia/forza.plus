@@ -1,0 +1,32 @@
+{
+  "forza__777": {
+    "displayName": "Forza",
+    "platforms": {
+      "x": {
+        "handle": "forza__777",
+        "followers": 355
+      },
+      "instagram": [
+        {
+          "handle": "forza__777",
+          "followers": 34500,
+          "type": "primary"
+        },
+        {
+          "handle": "goytogoy",
+          "followers": 1676,
+          "type": "backup"
+        }
+      ],
+      "kick": {
+        "handle": "forzzza",
+        "followers": 8
+      },
+      "rumble": {
+        "channel": null,
+        "followers": 0
+      }
+    },
+    "updatedAt": "2026-03-02"
+  }
+}

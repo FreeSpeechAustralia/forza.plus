@@ -211,10 +211,46 @@ main {
   color: var(--muted);
 }
 
+.sort-panel.is-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+}
+
+.sort-panel.is-empty label,
+.sort-panel.is-empty select {
+  display: none;
+}
+
+.sort-panel.is-empty p {
+  margin: 0;
+  color: #d6eeff;
+  font-weight: 600;
+}
+
 .video-grid {
   display: grid;
   gap: 0.9rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.video-placeholder {
+  grid-column: 1 / -1;
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  border-style: dashed;
+  border-color: rgba(151, 191, 255, 0.32);
+  background: linear-gradient(165deg, rgba(8, 20, 48, 0.64), rgba(8, 16, 35, 0.58));
+  text-align: center;
+}
+
+.video-placeholder p {
+  margin: 0;
+  color: #d6eeff;
+  font-size: 1.02rem;
 }
 
 .video-card {
@@ -971,6 +1007,121 @@ h1 {
   transform: translateY(-1px);
 }
 
+.exclusive-main {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.exclusive-hero {
+  padding: clamp(1.2rem, 4vw, 2.2rem);
+}
+
+.exclusive-hero h1 {
+  max-width: 18ch;
+}
+
+.exclusive-subcopy {
+  margin: 1rem 0 0;
+  font-size: 1.03rem;
+  color: #d5ecff;
+}
+
+.exclusive-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 0.9rem;
+}
+
+.exclusive-overview,
+.membership-card {
+  padding: 1.1rem;
+}
+
+.exclusive-overview h2,
+.membership-card h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.exclusive-points {
+  margin: 0.85rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.52rem;
+  color: var(--muted);
+}
+
+.exclusive-points li::marker {
+  color: #8cd7ff;
+}
+
+.exclusive-note {
+  margin: 0.85rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.membership-card {
+  border-color: rgba(121, 198, 255, 0.34);
+  background: linear-gradient(165deg, rgba(8, 26, 56, 0.84), rgba(8, 20, 44, 0.62));
+}
+
+.membership-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.32rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid rgba(151, 191, 255, 0.42);
+  background: rgba(52, 122, 255, 0.2);
+  color: #cce8ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.membership-copy {
+  margin: 0.5rem 0 1rem;
+  color: var(--muted);
+}
+
+.membership-actions {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.membership-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.membership-grid a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.45rem;
+  text-decoration: none;
+  color: #d8efff;
+  border-radius: 12px;
+  border: 1px solid rgba(151, 191, 255, 0.33);
+  background: linear-gradient(145deg, rgba(42, 104, 236, 0.38), rgba(72, 197, 255, 0.2));
+  font-weight: 600;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.membership-grid a:hover {
+  border-color: rgba(180, 221, 255, 0.6);
+  background: linear-gradient(145deg, rgba(59, 124, 255, 0.42), rgba(88, 213, 255, 0.24));
+  transform: translateY(-1px);
+}
+
+.membership-note {
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(16px);
@@ -1040,6 +1191,14 @@ h1 {
   }
 
   .donate-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .exclusive-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .membership-grid {
     grid-template-columns: 1fr;
   }
 
