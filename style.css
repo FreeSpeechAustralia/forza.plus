@@ -1433,7 +1433,7 @@ h1 {
   }
 
   body::before {
-    background-image: linear-gradient(160deg, rgba(3, 10, 27, 0.48), rgba(3, 10, 27, 0.28)), url("Branding/background-mobile.png");
+    background-image: linear-gradient(160deg, rgba(3, 10, 27, 0.48), rgba(3, 10, 27, 0.28)), url("Branding/background-mobile.jpg?v=20260303-mobile-bg-jpg");
     background-position: center top;
     background-size: 100% auto;
     background-repeat: no-repeat;
