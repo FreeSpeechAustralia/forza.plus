@@ -8,6 +8,7 @@ const STORAGE_EMAIL_KEY = 'forza.accounts.email';
 const STORAGE_SESSION_KEY = 'forza.accounts.sessionToken';
 const TELEGRAM_LINK_POLL_INTERVAL_MS = 4000;
 const TELEGRAM_LINK_POLL_MAX_DURATION_MS = 60000;
+const STRIPE_MEMBERSHIP_TIER = 'supporter';
 
 let telegramLinkPollTimeoutId = null;
 let telegramLinkPollStopAt = 0;
@@ -30,6 +31,7 @@ const telegramLinkResult = document.getElementById('telegramLinkResult');
 const telegramTokenValue = document.getElementById('telegramTokenValue');
 const telegramDeepLink = document.getElementById('telegramDeepLink');
 const telegramExpiry = document.getElementById('telegramExpiry');
+const startMembershipCheckoutButton = document.getElementById('startMembershipCheckout');
 
 function getActiveEmail() {
   return String(accountEmailInput.value || '').trim().toLowerCase();
@@ -48,6 +50,20 @@ function setLoading(isLoading, submitLabel = 'Send sign-in link') {
   logoutSessionButton.disabled = isLoading;
   createTelegramLinkButton.disabled = isLoading;
   unlinkTelegramButton.disabled = isLoading;
+  if (startMembershipCheckoutButton) {
+    startMembershipCheckoutButton.disabled = isLoading;
+  }
+}
+
+function setCheckoutButtonLoading(isLoading) {
+  if (!startMembershipCheckoutButton) {
+    return;
+  }
+
+  startMembershipCheckoutButton.disabled = isLoading;
+  startMembershipCheckoutButton.textContent = isLoading
+    ? 'Redirecting...'
+    : 'Start Membership - $10';
 }
 
 function setStatusPill(text, tone = 'neutral') {
@@ -165,14 +181,45 @@ function clearSessionToken() {
   localStorage.removeItem(STORAGE_SESSION_KEY);
 }
 
-function removeTokenQueryParam() {
+function removeUrlQueryParams(paramNames) {
   const url = new URL(window.location.href);
-  if (!url.searchParams.has('token')) {
+  let changed = false;
+
+  paramNames.forEach((paramName) => {
+    if (!url.searchParams.has(paramName)) {
+      return;
+    }
+
+    url.searchParams.delete(paramName);
+    changed = true;
+  });
+
+  if (!changed) {
     return;
   }
 
-  url.searchParams.delete('token');
   window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
+function removeTokenQueryParam() {
+  removeUrlQueryParams(['token']);
+}
+
+function getStripeReturnState() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const status = String(searchParams.get('stripe') || '').trim().toLowerCase();
+  if (status !== 'success' && status !== 'cancel') {
+    return null;
+  }
+
+  return {
+    status,
+    sessionId: String(searchParams.get('session_id') || '').trim() || null,
+  };
+}
+
+function removeStripeQueryParams() {
+  removeUrlQueryParams(['stripe', 'session_id']);
 }
 
 function buildHeaders({ includeAuth = true } = {}) {
@@ -248,6 +295,45 @@ function renderAccount(account) {
   }
 }
 
+async function startMembershipCheckout() {
+  if (!getSessionToken()) {
+    setStatusPill('Sign in required', 'neutral');
+    setMessage('Sign in with a magic link first, then start membership checkout.', 'info');
+    return;
+  }
+
+  setCheckoutButtonLoading(true);
+
+  try {
+    const payload = await requestJson('/api/v1/stripe/checkout-session', {
+      method: 'POST',
+      body: {
+        tier: STRIPE_MEMBERSHIP_TIER,
+      },
+    });
+
+    const checkoutUrl = payload?.session?.url;
+    if (!checkoutUrl) {
+      throw new Error('Stripe checkout session was created without a redirect URL.');
+    }
+
+    window.location.assign(checkoutUrl);
+  } catch (error) {
+    const normalizedMessage = String(error.message || '').toLowerCase();
+    if (normalizedMessage.includes('session') || normalizedMessage.includes('authentication')) {
+      hideTelegramToolsForSignedOutState();
+      setStatusPill('Signed out', 'neutral');
+      setMessage('Session expired. Sign in again, then retry membership checkout.', 'info');
+      return;
+    }
+
+    setStatusPill('Error', 'error');
+    setMessage(error.message, 'error');
+  } finally {
+    setCheckoutButtonLoading(false);
+  }
+}
+
 async function sendMagicLink() {
   const email = getActiveEmail();
   if (!email) {
@@ -317,7 +403,7 @@ async function verifyMagicLink(tokenOverride) {
   }
 }
 
-async function loadAccount() {
+async function loadAccount({ stripeReturnStatus = null } = {}) {
   stopTelegramLinkPolling();
   if (!getSessionToken()) {
     hideTelegramToolsForSignedOutState();
@@ -332,7 +418,14 @@ async function loadAccount() {
   try {
     const payload = await requestJson('/api/v1/accounts/me');
     renderAccount(payload.account);
-    setMessage(`Loaded account for ${payload.account.user.email}`, 'success');
+
+    if (stripeReturnStatus === 'success') {
+      setMessage(`Stripe checkout completed. Loaded account for ${payload.account.user.email}`, 'success');
+    } else if (stripeReturnStatus === 'cancel') {
+      setMessage(`Stripe checkout was canceled. Loaded account for ${payload.account.user.email}`, 'info');
+    } else {
+      setMessage(`Loaded account for ${payload.account.user.email}`, 'success');
+    }
   } catch (error) {
     if (!getSessionToken()) {
       hideTelegramToolsForSignedOutState();
@@ -454,6 +547,9 @@ logoutSessionButton.addEventListener('click', async () => {
 
 createTelegramLinkButton.addEventListener('click', createTelegramLinkToken);
 unlinkTelegramButton.addEventListener('click', unlinkTelegram);
+if (startMembershipCheckoutButton) {
+  startMembershipCheckoutButton.addEventListener('click', startMembershipCheckout);
+}
 
 (function init() {
   stopTelegramLinkPolling();
@@ -462,16 +558,39 @@ unlinkTelegramButton.addEventListener('click', unlinkTelegram);
   clearAccountView();
   hideTelegramToolsForSignedOutState();
 
+  const stripeReturnState = getStripeReturnState();
   const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
   if (tokenFromUrl) {
+    if (stripeReturnState) {
+      removeStripeQueryParams();
+    }
+
     setStatusPill('Verifying', 'neutral');
     verifyMagicLink(tokenFromUrl);
     return;
   }
 
+  if (stripeReturnState) {
+    removeStripeQueryParams();
+  }
+
   if (getSessionToken()) {
     setStatusPill('Session found', 'neutral');
-    loadAccount();
+    loadAccount({
+      stripeReturnStatus: stripeReturnState ? stripeReturnState.status : null,
+    });
+    return;
+  }
+
+  if (stripeReturnState && stripeReturnState.status === 'success') {
+    setStatusPill('Sign in required', 'neutral');
+    setMessage('Stripe checkout completed. Sign in with your magic link to load updated membership status.', 'info');
+    return;
+  }
+
+  if (stripeReturnState && stripeReturnState.status === 'cancel') {
+    setStatusPill('Signed out', 'neutral');
+    setMessage('Stripe checkout was canceled. Sign in or restart membership when ready.', 'info');
     return;
   }
 
