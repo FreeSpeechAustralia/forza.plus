@@ -4,6 +4,9 @@ const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.header-nav');
 const revealEls = document.querySelectorAll('.reveal');
 const counter = document.querySelector('.counter');
+const solanaWalletAddress = document.getElementById('solanaWalletAddress');
+const copySolanaAddressButton = document.getElementById('copySolanaAddress');
+const solanaCopyStatus = document.getElementById('solanaCopyStatus');
 const SOCIAL_PROFILES_URL = 'social-profiles.json?v=20260303-followers-65184';
 const SOCIAL_PROFILES_FALLBACK = {
   forza__777: {
@@ -145,7 +148,68 @@ async function animatePulseCounter() {
   tick();
 }
 
+function setSolanaCopyStatus(message, tone = 'info') {
+  if (!solanaCopyStatus) return;
+
+  solanaCopyStatus.textContent = message;
+  solanaCopyStatus.dataset.tone = tone;
+  solanaCopyStatus.hidden = false;
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  helper.style.pointerEvents = 'none';
+  document.body.appendChild(helper);
+  helper.focus();
+  helper.select();
+  helper.setSelectionRange(0, helper.value.length);
+
+  let copied = false;
+
+  try {
+    copied = document.execCommand('copy');
+  } finally {
+    document.body.removeChild(helper);
+  }
+
+  return copied;
+}
+
+async function handleSolanaCopyAddress() {
+  if (!solanaWalletAddress) return;
+
+  const walletAddress = solanaWalletAddress.textContent ? solanaWalletAddress.textContent.trim() : '';
+  if (!walletAddress) {
+    setSolanaCopyStatus('Wallet address unavailable.', 'error');
+    return;
+  }
+
+  try {
+    const copied = await copyTextToClipboard(walletAddress);
+    if (!copied) throw new Error('Copy command was not successful.');
+    setSolanaCopyStatus('Wallet address copied.', 'success');
+  } catch (error) {
+    console.warn('Unable to copy Solana wallet address.', error);
+    setSolanaCopyStatus('Unable to copy automatically. Please copy the address manually.', 'error');
+  }
+}
+
 animatePulseCounter();
+
+if (copySolanaAddressButton && solanaWalletAddress) {
+  copySolanaAddressButton.addEventListener('click', () => {
+    void handleSolanaCopyAddress();
+  });
+}
 
 if (canvas && ctx) {
   resizeCanvas();

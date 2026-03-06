@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Syne:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260304-footer-bg-adjustments" />
+  <link rel="stylesheet" href="style.css?v=20260306-paypal-linkbox" />
 </head>
 <body>
   <canvas id="nebula-canvas" aria-hidden="true"></canvas>
@@ -63,6 +63,11 @@
         <h2 id="paypal-title">Support via PayPal</h2>
         <p class="paypal-copy">Fast and secure one-time support.</p>
 
+        <div class="paypal-link-box">
+          <p class="paypal-link-label">PayPal.Me link</p>
+          <a class="paypal-link-address" href="https://www.paypal.com/paypalme/Willforza777" target="_blank" rel="noopener noreferrer">paypal.me/Willforza777</a>
+        </div>
+
         <div class="paypal-actions">
           <a class="btn primary" href="https://www.paypal.com/paypalme/Willforza777" target="_blank" rel="noopener noreferrer">Open PayPal.Me</a>
           <div class="amount-grid" aria-label="Quick donation amounts">
@@ -73,6 +78,31 @@
           </div>
         </div>
       </article>
+
+      <article class="glass solana-card" aria-labelledby="solana-title">
+        <div class="solana-badge" aria-hidden="true">Solana</div>
+        <h2 id="solana-title">Support with SOL</h2>
+        <p class="solana-copy">Prefer crypto? Send SOL directly to the wallet below.</p>
+
+        <div class="solana-wallet-box">
+          <p class="solana-wallet-label">Wallet address</p>
+          <code id="solanaWalletAddress" class="solana-wallet-address">BURDfzxAQjLn8ArJ6JLaNopvZfCvQM6DUUqjQfyaYR5b</code>
+        </div>
+
+        <div class="solana-actions">
+          <button id="copySolanaAddress" class="btn ghost" type="button">Copy Wallet Address</button>
+          <a class="btn primary" href="https://solscan.io/account/BURDfzxAQjLn8ArJ6JLaNopvZfCvQM6DUUqjQfyaYR5b" target="_blank" rel="noopener noreferrer">View on Solscan</a>
+        </div>
+
+        <div class="amount-grid solana-amount-grid" aria-label="Preset Solana donation amounts">
+          <a href="solana:BURDfzxAQjLn8ArJ6JLaNopvZfCvQM6DUUqjQfyaYR5b?amount=0.10&amp;label=Forza&amp;message=Donation%20support" aria-label="Donate 0.10 SOL">0.10 SOL</a>
+          <a href="solana:BURDfzxAQjLn8ArJ6JLaNopvZfCvQM6DUUqjQfyaYR5b?amount=0.25&amp;label=Forza&amp;message=Donation%20support" aria-label="Donate 0.25 SOL">0.25 SOL</a>
+          <a href="solana:BURDfzxAQjLn8ArJ6JLaNopvZfCvQM6DUUqjQfyaYR5b?amount=0.50&amp;label=Forza&amp;message=Donation%20support" aria-label="Donate 0.50 SOL">0.50 SOL</a>
+          <a href="solana:BURDfzxAQjLn8ArJ6JLaNopvZfCvQM6DUUqjQfyaYR5b?amount=1.00&amp;label=Forza&amp;message=Donation%20support" aria-label="Donate 1 SOL">1 SOL</a>
+        </div>
+
+        <p id="solanaCopyStatus" class="solana-status" role="status" aria-live="polite" hidden></p>
+      </article>
     </section>
   </main>
 
@@ -82,6 +112,6 @@
     </section>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=20260306-solana-donate"></script>
 </body>
 </html>

@@ -954,17 +954,30 @@ h1 {
 
 .donate-layout {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.9rem;
+  align-items: stretch;
 }
 
 .donate-notes,
-.paypal-card {
+.paypal-card,
+.solana-card {
   padding: 1.1rem;
 }
 
+.paypal-card,
+.solana-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.donate-notes {
+  grid-column: 1 / -1;
+}
+
 .donate-notes h2,
-.paypal-card h2 {
+.paypal-card h2,
+.solana-card h2 {
   margin: 0;
   font-size: 1.3rem;
 }
@@ -1005,9 +1018,44 @@ h1 {
   color: var(--muted);
 }
 
+.paypal-link-box {
+  border: 1px dashed rgba(151, 191, 255, 0.42);
+  border-radius: 14px;
+  background: rgba(8, 22, 52, 0.52);
+  padding: 0.75rem;
+}
+
+.paypal-link-label {
+  margin: 0;
+  color: #9ed9ff;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.paypal-link-address {
+  display: block;
+  margin-top: 0.45rem;
+  padding: 0.5rem 0.62rem;
+  border-radius: 10px;
+  background: rgba(15, 47, 101, 0.56);
+  color: #e3f6ff;
+  text-decoration: none;
+  font-family: "Courier New", monospace;
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.paypal-link-address:hover {
+  color: #f1f9ff;
+  background: rgba(21, 58, 120, 0.62);
+}
+
 .paypal-actions {
   display: grid;
   gap: 0.8rem;
+  margin-top: auto;
 }
 
 .amount-grid {
@@ -1034,6 +1082,116 @@ h1 {
   border-color: rgba(180, 221, 255, 0.6);
   background: linear-gradient(145deg, rgba(59, 124, 255, 0.42), rgba(88, 213, 255, 0.24));
   transform: translateY(-1px);
+}
+
+.solana-card {
+  border-color: rgba(123, 230, 210, 0.34);
+  background: linear-gradient(165deg, rgba(7, 40, 41, 0.82), rgba(8, 24, 52, 0.62));
+}
+
+.solana-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.32rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid rgba(145, 239, 220, 0.44);
+  background: rgba(39, 176, 142, 0.2);
+  color: #cbfff3;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.solana-copy {
+  margin: 0.5rem 0 1rem;
+  color: var(--muted);
+}
+
+.solana-wallet-box {
+  border: 1px dashed rgba(151, 241, 223, 0.44);
+  border-radius: 14px;
+  background: rgba(8, 34, 40, 0.48);
+  padding: 0.75rem;
+}
+
+.solana-wallet-label {
+  margin: 0;
+  color: #8fe8d4;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.solana-wallet-address {
+  display: block;
+  margin-top: 0.45rem;
+  padding: 0.5rem 0.62rem;
+  border-radius: 10px;
+  background: rgba(11, 43, 57, 0.62);
+  color: #e3fff8;
+  font-family: "Courier New", monospace;
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.solana-actions {
+  margin-top: auto;
+  padding-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.solana-actions .btn {
+  min-height: 2.45rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.solana-actions .btn.ghost {
+  border-color: rgba(145, 239, 220, 0.38);
+  background: rgba(29, 123, 104, 0.24);
+  color: #dbfff4;
+}
+
+.solana-actions .btn.ghost:hover {
+  border-color: rgba(182, 255, 238, 0.58);
+  background: rgba(39, 146, 123, 0.28);
+}
+
+.solana-amount-grid {
+  margin-top: 0.8rem;
+}
+
+.solana-amount-grid a {
+  border-color: rgba(140, 236, 217, 0.38);
+  background: linear-gradient(145deg, rgba(28, 120, 122, 0.44), rgba(41, 155, 202, 0.28));
+  color: #ddfff6;
+}
+
+.solana-amount-grid a:hover {
+  border-color: rgba(189, 255, 239, 0.6);
+  background: linear-gradient(145deg, rgba(38, 139, 140, 0.48), rgba(52, 169, 219, 0.32));
+}
+
+.solana-status {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.solana-status[data-tone="success"] {
+  color: #c6ffe1;
+}
+
+.solana-status[data-tone="error"] {
+  color: #ffc8c8;
 }
 
 .exclusive-main {
@@ -1417,6 +1575,17 @@ h1 {
   }
 
   .donate-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .donate-notes,
+  .paypal-card,
+  .solana-card {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .solana-actions {
     grid-template-columns: 1fr;
   }
 
