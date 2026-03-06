@@ -9,6 +9,7 @@ const STORAGE_SESSION_KEY = 'forza.accounts.sessionToken';
 const TELEGRAM_LINK_POLL_INTERVAL_MS = 4000;
 const TELEGRAM_LINK_POLL_MAX_DURATION_MS = 60000;
 const STRIPE_MEMBERSHIP_TIER = 'supporter';
+const STRIPE_CREATOR_SLUG = String(document.body.dataset.creatorSlug || 'forza').trim().toLowerCase() || 'forza';
 
 let telegramLinkPollTimeoutId = null;
 let telegramLinkPollStopAt = 0;
@@ -18,6 +19,7 @@ const accountLookupForm = document.getElementById('accountLookupForm');
 const accountEmailInput = document.getElementById('accountEmail');
 const accountStatusPill = document.getElementById('accountStatusPill');
 const accountEmailValue = document.getElementById('accountEmailValue');
+const membershipCreator = document.getElementById('membershipCreator');
 const membershipTier = document.getElementById('membershipTier');
 const membershipStatus = document.getElementById('membershipStatus');
 const telegramStatus = document.getElementById('telegramStatus');
@@ -164,9 +166,33 @@ function startTelegramLinkPolling(expiresAtInput) {
 
 function clearAccountView() {
   accountEmailValue.textContent = '-';
+  if (membershipCreator) {
+    membershipCreator.textContent = '-';
+  }
   membershipTier.textContent = '-';
   membershipStatus.textContent = '-';
   telegramStatus.textContent = 'Not linked';
+}
+
+function resolveMembershipForCreator(account) {
+  const memberships = Array.isArray(account.memberships)
+    ? account.memberships
+    : [];
+
+  if (memberships.length > 0) {
+    const preferred = memberships.find((entry) => {
+      const slug = String(entry?.creatorSlug || '').trim().toLowerCase();
+      return slug && slug === STRIPE_CREATOR_SLUG;
+    });
+
+    if (preferred) {
+      return preferred;
+    }
+
+    return memberships[0];
+  }
+
+  return account.membership || {};
 }
 
 function getSessionToken() {
@@ -274,11 +300,14 @@ async function requestJson(path, options = {}) {
 }
 
 function renderAccount(account) {
-  const membership = account.membership || {};
+  const membership = resolveMembershipForCreator(account);
   const telegram = account.telegram || { linked: false };
   const linked = Boolean(telegram.linked);
 
   accountEmailValue.textContent = account.user.email || '-';
+  if (membershipCreator) {
+    membershipCreator.textContent = membership.creatorDisplayName || membership.creatorSlug || '-';
+  }
   membershipTier.textContent = membership.tier || 'No tier';
   membershipStatus.textContent = membership.status || 'No membership';
   telegramToolsSection.hidden = false;
@@ -309,6 +338,7 @@ async function startMembershipCheckout() {
       method: 'POST',
       body: {
         tier: STRIPE_MEMBERSHIP_TIER,
+        creatorSlug: STRIPE_CREATOR_SLUG,
       },
     });
 

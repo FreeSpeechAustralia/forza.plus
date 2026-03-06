@@ -4,7 +4,7 @@ const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.header-nav');
 const revealEls = document.querySelectorAll('.reveal');
 const counter = document.querySelector('.counter');
-const SOCIAL_PROFILES_URL = 'social-profiles.json';
+const SOCIAL_PROFILES_URL = 'social-profiles.json?v=20260303-followers-65184';
 const SOCIAL_PROFILES_FALLBACK = {
   forza__777: {
     displayName: 'Forza',
@@ -16,7 +16,7 @@ const SOCIAL_PROFILES_FALLBACK = {
       instagram: [
         {
           handle: 'forza__777',
-          followers: 34500,
+          followers: 63145,
           type: 'primary',
         },
         {
@@ -34,7 +34,7 @@ const SOCIAL_PROFILES_FALLBACK = {
         followers: 0,
       },
     },
-    updatedAt: '2026-03-02',
+    updatedAt: '2026-03-03',
   },
 };
 

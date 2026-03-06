@@ -6,6 +6,7 @@ const API_BASE_URL = (
 
 const STORAGE_SESSION_KEY = 'forza.accounts.sessionToken';
 const STRIPE_MEMBERSHIP_TIER = 'supporter';
+const STRIPE_CREATOR_SLUG = String(document.body.dataset.creatorSlug || 'forza').trim().toLowerCase() || 'forza';
 
 const startMembershipCheckoutLink = document.getElementById('startMembershipCheckout');
 const membershipCheckoutMessage = document.getElementById('membershipCheckoutMessage');
@@ -45,6 +46,7 @@ async function requestCheckoutSession(token) {
     },
     body: JSON.stringify({
       tier: STRIPE_MEMBERSHIP_TIER,
+      creatorSlug: STRIPE_CREATOR_SLUG,
     }),
   });
 
