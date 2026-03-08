@@ -40,84 +40,11 @@
   </header>
 
   <main class="accounts-main">
-    <section class="accounts-hero glass reveal">
+    <section class="accounts-hero glass reveal" aria-labelledby="accounts-coming-soon-title">
       <p class="label">Accounts</p>
-      <h1>Manage your membership account.</h1>
-      <p class="copy">Sign in with a magic link sent to your email, then manage your membership status and Telegram access links.</p>
-      <p class="accounts-note">Account access now requires email-link verification.</p>
-    </section>
-
-    <section class="accounts-layout reveal">
-      <article class="glass account-panel" aria-labelledby="lookup-title">
-        <h2 id="lookup-title">Email sign-in</h2>
-        <form id="accountLookupForm" class="account-lookup-form" novalidate>
-          <label for="accountEmail">Account email</label>
-          <input id="accountEmail" name="accountEmail" type="email" autocomplete="email" placeholder="demo@freespeechaustralia.org" required />
-          <button class="btn primary" type="submit">Send sign-in link</button>
-        </form>
-        <div class="account-buttons">
-          <button id="logoutSession" class="btn ghost" type="button">Log out</button>
-        </div>
-        <p class="account-helper">Send a sign-in link, then open it from your inbox to complete sign-in.</p>
-      </article>
-
-      <article class="glass account-panel" aria-labelledby="status-title">
-        <div class="account-panel-head">
-          <h2 id="status-title">Account status</h2>
-          <span id="accountStatusPill" class="status-pill">Not loaded</span>
-        </div>
-
-        <dl class="account-facts">
-          <div>
-            <dt>Email</dt>
-            <dd id="accountEmailValue">-</dd>
-          </div>
-          <div>
-            <dt>Creator</dt>
-            <dd id="membershipCreator">-</dd>
-          </div>
-          <div>
-            <dt>Tier</dt>
-            <dd id="membershipTier">-</dd>
-          </div>
-          <div>
-            <dt>Membership status</dt>
-            <dd id="membershipStatus">-</dd>
-          </div>
-          <div>
-            <dt>Telegram link</dt>
-            <dd id="telegramStatus">Not linked</dd>
-          </div>
-        </dl>
-
-        <div class="account-buttons">
-          <button id="startMembershipCheckout" class="btn primary" type="button">Start Membership - $10</button>
-        </div>
-        <p class="account-helper">Launches Stripe checkout for your supporter membership.</p>
-      </article>
-    </section>
-
-    <section id="telegramToolsSection" class="accounts-actions reveal" aria-labelledby="telegram-title" hidden>
-      <article class="glass account-panel">
-        <h2 id="telegram-title">Telegram access tools</h2>
-        <p class="account-helper">Create a one-time link token, open the Telegram bot deep link, and we'll auto-check link status for about a minute.</p>
-        <div class="account-buttons">
-          <button id="createTelegramLink" class="btn primary" type="button">Create Telegram link token</button>
-          <button id="unlinkTelegram" class="btn ghost" type="button">Unlink Telegram</button>
-        </div>
-        <div id="telegramLinkResult" class="token-box" hidden>
-          <p><strong>Token</strong>: <code id="telegramTokenValue"></code></p>
-          <p><strong>Deep link</strong>: <a id="telegramDeepLink" href="#" target="_blank" rel="noopener noreferrer">Open bot link</a></p>
-          <p><strong>Expires</strong>: <span id="telegramExpiry"></span></p>
-        </div>
-      </article>
-    </section>
-
-    <section class="reveal">
-      <article class="glass account-panel account-feedback-panel">
-        <h2>Request log</h2>
-        <p id="accountsMessage" class="account-message">Send a magic link to begin.</p>
-      </article>
+      <h1 id="accounts-coming-soon-title">Coming soon...</h1>
+      <p class="copy">The accounts experience is temporarily unavailable while we prepare the next release.</p>
+      <p class="accounts-note">Please check back soon.</p>
     </section>
   </main>
 
@@ -128,6 +55,5 @@
   </footer>
 
   <script src="script.js?v=20260302-social-profiles"></script>
-  <script src="accounts.js?v=20260304-stripe-connect"></script>
 </body>
 </html>
