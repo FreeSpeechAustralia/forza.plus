@@ -8,7 +8,7 @@ const STORAGE_SESSION_KEY = 'forza.accounts.sessionToken';
 const STRIPE_MEMBERSHIP_TIER = 'supporter';
 const STRIPE_CREATOR_SLUG = String(document.body.dataset.creatorSlug || 'forza').trim().toLowerCase() || 'forza';
 
-const startMembershipCheckoutLink = document.getElementById('startMembershipCheckout');
+const startMembershipCheckoutLink = document.getElementById('exclusiveStartMembershipCheckout');
 const membershipCheckoutMessage = document.getElementById('membershipCheckoutMessage');
 
 function getSessionToken() {
@@ -82,7 +82,7 @@ async function handleStartMembership(event) {
 
   const sessionToken = getSessionToken();
   if (!sessionToken) {
-    window.location.assign('accounts.html');
+    window.location.assign('/accounts');
     return;
   }
 
@@ -95,7 +95,7 @@ async function handleStartMembership(event) {
   } catch (error) {
     const normalizedMessage = String(error.message || '').toLowerCase();
     if (normalizedMessage.includes('session') || normalizedMessage.includes('authentication')) {
-      window.location.assign('accounts.html');
+      window.location.assign('/accounts');
       return;
     }
 

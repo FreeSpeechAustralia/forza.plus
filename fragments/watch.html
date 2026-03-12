@@ -1,0 +1,41 @@
+<section class="watch-profile-layout">
+  <article class="glass profile-card kick-profile-card" aria-labelledby="kick-profile-title">
+    <img src="Assets/kick-logo.jpg" alt="" class="kick-profile-logo" aria-hidden="true" />
+    <div class="profile-head kick-profile-head">
+      <div class="profile-avatar" aria-hidden="true">
+        <img src="Assets/insta-photo.jpg" alt="" class="profile-avatar-image" />
+      </div>
+      <div class="kick-profile-meta">
+        <h2 id="kick-profile-title">forzzza</h2>
+        <p class="profile-handle">kick.com/forzzza</p>
+      </div>
+      <a href="https://kick.com/forzzza" class="kick-follow-btn" target="_blank" rel="noopener noreferrer">Follow</a>
+    </div>
+    <p class="profile-copy">The primary home for live streams, direct chat, and uncensored updates.</p>
+    <div class="profile-actions">
+      <a href="https://kick.com/forzzza" class="btn primary" target="_blank" rel="noopener noreferrer">Watch on Kick</a>
+    </div>
+  </article>
+</section>
+
+<section class="streams-hero glass reveal">
+  <div>
+    <p class="label">Watch</p>
+    <a href="https://rumble.com" target="_blank" rel="noopener noreferrer" aria-label="Open Rumble" class="streams-hero-logo-link">
+      <img src="Assets/rumble-logo.png" alt="Rumble" class="streams-hero-logo" />
+    </a>
+    <h1>Stream Archive</h1>
+    <p class="copy">All kick streams archived on Rumble for your convenience.</p>
+  </div>
+  <div class="sort-panel">
+    <label for="sortSelect">Sort by</label>
+    <select id="sortSelect" aria-label="Sort videos">
+      <option value="latest" selected>Latest</option>
+      <option value="oldest">Oldest</option>
+      <option value="title">Title (A-Z)</option>
+    </select>
+    <p id="videoCount">0 videos</p>
+  </div>
+</section>
+
+<section id="videoGrid" class="video-grid" aria-live="polite"></section>

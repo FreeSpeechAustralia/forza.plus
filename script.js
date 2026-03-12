@@ -1,12 +1,3 @@
-const canvas = document.getElementById('nebula-canvas');
-const ctx = canvas ? canvas.getContext('2d') : null;
-const navToggle = document.querySelector('.nav-toggle');
-const nav = document.querySelector('.header-nav');
-const revealEls = document.querySelectorAll('.reveal');
-const counter = document.querySelector('.counter');
-const solanaWalletAddress = document.getElementById('solanaWalletAddress');
-const copySolanaAddressButton = document.getElementById('copySolanaAddress');
-const solanaCopyStatus = document.getElementById('solanaCopyStatus');
 const SOCIAL_PROFILES_URL = 'social-profiles.json?v=20260303-followers-65184';
 const SOCIAL_PROFILES_FALLBACK = {
   forza__777: {
@@ -49,43 +40,55 @@ const stars = Array.from({ length: 70 }, () => ({
   v: Math.random() * 0.0007 + 0.0002,
 }));
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+let canvas = null;
+let ctx = null;
+let io = null;
+let socialProfilesPromise = null;
+let canvasStarted = false;
+
+function initRevealObserver() {
+  if (io) return;
+
+  io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.18 });
 }
 
-function drawStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach((star) => {
-    star.y += star.v;
-    if (star.y > 1.02) star.y = -0.02;
-
-    ctx.beginPath();
-    ctx.arc(star.x * canvas.width, star.y * canvas.height, star.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(183, 222, 255, ${star.o})`;
-    ctx.fill();
+function observeRevealElements(root = document) {
+  initRevealObserver();
+  const revealEls = root.querySelectorAll('.reveal');
+  revealEls.forEach((item) => {
+    if (item.classList.contains('visible')) return;
+    io.observe(item);
   });
-
-  requestAnimationFrame(drawStars);
 }
 
-if (navToggle) {
+function closeNavigationMenu() {
+  const nav = document.querySelector('.header-nav');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (!nav || !navToggle) return;
+
+  nav.classList.remove('open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+
+function initNavigationToggle() {
+  const nav = document.querySelector('.header-nav');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (!nav || !navToggle) return;
+  if (navToggle.dataset.bound === 'true') return;
+
+  navToggle.dataset.bound = 'true';
   navToggle.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', String(open));
   });
 }
-
-const io = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      io.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.18 });
-
-revealEls.forEach((item) => io.observe(item));
 
 function totalFollowersFromProfile(profile) {
   const platforms = profile && profile.platforms ? profile.platforms : {};
@@ -107,38 +110,55 @@ function totalFollowersFromProfile(profile) {
   return total;
 }
 
-async function getPulseTarget() {
+async function loadSocialProfiles() {
+  if (socialProfilesPromise) {
+    return socialProfilesPromise;
+  }
+
+  socialProfilesPromise = (async () => {
+    const response = await fetch(SOCIAL_PROFILES_URL, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Unable to load ${SOCIAL_PROFILES_URL}`);
+    }
+
+    return response.json();
+  })();
+
+  return socialProfilesPromise;
+}
+
+async function getPulseTarget(counter) {
   const fallback = Number((counter && counter.dataset.target) || 0);
   const profileKey = (counter && counter.dataset.profileKey) || 'forza__777';
 
   try {
-    const response = await fetch(SOCIAL_PROFILES_URL, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Unable to load ${SOCIAL_PROFILES_URL}`);
-
-    const profiles = await response.json();
+    const profiles = await loadSocialProfiles();
     const profile = profiles[profileKey];
     const total = totalFollowersFromProfile(profile);
-
-    return total > 0 ? total : fallback;
+    if (total > 0) return total;
   } catch (error) {
-    const localProfile = SOCIAL_PROFILES_FALLBACK[profileKey];
-    const localTotal = totalFollowersFromProfile(localProfile);
-    if (localTotal > 0) return localTotal;
-
     console.warn('Pulse total fallback used (social-profiles.json not loaded).', error);
-    return fallback;
   }
+
+  const localProfile = SOCIAL_PROFILES_FALLBACK[profileKey];
+  const localTotal = totalFollowersFromProfile(localProfile);
+  if (localTotal > 0) return localTotal;
+
+  return fallback;
 }
 
-async function animatePulseCounter() {
+async function animatePulseCounter(counter) {
   if (!counter) return;
+  if (counter.dataset.counterHydrated === 'true') return;
 
-  const target = await getPulseTarget();
+  counter.dataset.counterHydrated = 'true';
+  const target = await getPulseTarget(counter);
   counter.dataset.target = String(target);
   let frame = 0;
   const frames = 80;
 
   const tick = () => {
+    if (!counter.isConnected) return;
     frame += 1;
     const value = Math.round((target * frame) / frames);
     counter.textContent = value.toLocaleString();
@@ -148,12 +168,12 @@ async function animatePulseCounter() {
   tick();
 }
 
-function setSolanaCopyStatus(message, tone = 'info') {
-  if (!solanaCopyStatus) return;
+function setSolanaCopyStatus(statusEl, message, tone = 'info') {
+  if (!statusEl) return;
 
-  solanaCopyStatus.textContent = message;
-  solanaCopyStatus.dataset.tone = tone;
-  solanaCopyStatus.hidden = false;
+  statusEl.textContent = message;
+  statusEl.dataset.tone = tone;
+  statusEl.hidden = false;
 }
 
 async function copyTextToClipboard(text) {
@@ -184,35 +204,90 @@ async function copyTextToClipboard(text) {
   return copied;
 }
 
-async function handleSolanaCopyAddress() {
-  if (!solanaWalletAddress) return;
-
-  const walletAddress = solanaWalletAddress.textContent ? solanaWalletAddress.textContent.trim() : '';
+async function handleSolanaCopyAddress(walletAddressEl, statusEl) {
+  if (!walletAddressEl) return;
+  const walletAddress = walletAddressEl.textContent ? walletAddressEl.textContent.trim() : '';
   if (!walletAddress) {
-    setSolanaCopyStatus('Wallet address unavailable.', 'error');
+    setSolanaCopyStatus(statusEl, 'Wallet address unavailable.', 'error');
     return;
   }
 
   try {
     const copied = await copyTextToClipboard(walletAddress);
     if (!copied) throw new Error('Copy command was not successful.');
-    setSolanaCopyStatus('Wallet address copied.', 'success');
+    setSolanaCopyStatus(statusEl, 'Wallet address copied.', 'success');
   } catch (error) {
     console.warn('Unable to copy Solana wallet address.', error);
-    setSolanaCopyStatus('Unable to copy automatically. Please copy the address manually.', 'error');
+    setSolanaCopyStatus(statusEl, 'Unable to copy automatically. Please copy the address manually.', 'error');
   }
 }
 
-animatePulseCounter();
+function bindSolanaCopy(root = document) {
+  const copyButton = root.querySelector('#copySolanaAddress');
+  const walletAddress = root.querySelector('#solanaWalletAddress');
+  const copyStatus = root.querySelector('#solanaCopyStatus');
+  if (!copyButton || !walletAddress) return;
+  if (copyButton.dataset.copyBound === 'true') return;
 
-if (copySolanaAddressButton && solanaWalletAddress) {
-  copySolanaAddressButton.addEventListener('click', () => {
-    void handleSolanaCopyAddress();
+  copyButton.dataset.copyBound = 'true';
+  copyButton.addEventListener('click', () => {
+    void handleSolanaCopyAddress(walletAddress, copyStatus);
   });
 }
 
-if (canvas && ctx) {
+function resizeCanvas() {
+  if (!canvas) return;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function drawStars() {
+  if (!canvas || !ctx) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach((star) => {
+    star.y += star.v;
+    if (star.y > 1.02) star.y = -0.02;
+
+    ctx.beginPath();
+    ctx.arc(star.x * canvas.width, star.y * canvas.height, star.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(183, 222, 255, ${star.o})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawStars);
+}
+
+function initCanvas() {
+  if (canvasStarted) return;
+
+  canvas = document.getElementById('nebula-canvas');
+  ctx = canvas ? canvas.getContext('2d') : null;
+  if (!canvas || !ctx) return;
+
+  canvasStarted = true;
   resizeCanvas();
   drawStars();
   window.addEventListener('resize', resizeCanvas);
 }
+
+function hydrateRoute(root = document) {
+  observeRevealElements(root);
+  const counter = root.querySelector('.counter');
+  if (counter) {
+    void animatePulseCounter(counter);
+  }
+  bindSolanaCopy(root);
+}
+
+function initSharedShell() {
+  initNavigationToggle();
+  initCanvas();
+}
+
+initSharedShell();
+
+window.ForzaShared = {
+  hydrate: hydrateRoute,
+  closeNavigationMenu,
+};

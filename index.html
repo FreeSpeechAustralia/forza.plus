@@ -10,11 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Syne:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=20260304-footer-bg-adjustments" />
 </head>
-<body>
+<body data-api-base-url="https://fsa-api-3iis.onrender.com" data-creator-slug="forza">
   <canvas id="nebula-canvas" aria-hidden="true"></canvas>
 
   <header class="header-shell" id="top">
-    <a class="logo" href="index.html#top">
+    <a class="logo" href="/">
       <img src="Branding/logo.png" alt="Forza" />
     </a>
 
@@ -24,13 +24,13 @@
     </button>
 
     <nav id="header-nav" class="header-nav" aria-label="Primary navigation">
-      <a href="watch.html">Watch</a>
-      <a href="posts.html">Posts</a>
-      <a href="exclusive.html">Exclusive</a>
-      <a href="donate.html">Donate</a>
+      <a href="/watch">Watch</a>
+      <a href="/posts">Posts</a>
+      <a href="/exclusive">Exclusive</a>
+      <a href="/donate">Donate</a>
     </nav>
 
-    <a class="accounts" href="accounts.html" aria-label="Accounts">
+    <a class="accounts" href="/accounts" aria-label="Accounts">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="12" cy="8" r="4"></circle>
         <path d="M5 20c1.6-3.6 4.5-5.2 7-5.2S17.4 16.4 19 20"></path>
@@ -39,73 +39,7 @@
     </a>
   </header>
 
-  <main>
-    <section class="hero-grid glass reveal">
-      <div class="hero-content">
-        <div>
-          <p class="label">Home</p>
-          <h1>Stream Truth. Fight for Christ.</h1>
-          <p class="copy">Goy-to-goy golden nuggets: unfiltered commentary, live streams, and the fight for truth in a fallen world.</p>
-          <div class="hero-actions">
-            <a href="watch.html" class="btn primary">Watch Now</a>
-            <a href="posts.html" class="btn ghost">Open Posts</a>
-          </div>
-        </div>
-        <div class="pulse-card">
-          <h2>Followers</h2>
-          <p>Total following across platforms</p>
-          <strong class="counter" data-target="0" data-profile-key="forza__777">0</strong>
-          <div class="mini-bars" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-      </div>
-     <div class="social-links" aria-label="Social platforms">
-       <a class="social-btn instagram" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-           <rect x="3.5" y="3.5" width="17" height="17" rx="5"></rect>
-           <circle cx="12" cy="12" r="4"></circle>
-           <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"></circle>
-         </svg>
-       </a>
-       <a class="social-btn x" href="https://x.com/forza__777" target="_blank" rel="noopener noreferrer" aria-label="X.com">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-          <path d="M4 4h4.2l3.8 5.3L16.4 4H20l-6.2 7 6.2 9H15.8l-4.1-5.8L7.2 20H4l6.4-7.3z"></path>
-        </svg>
-      </a>
-      <a class="social-btn kick" href="https://kick.com/forzzza" target="_blank" rel="noopener noreferrer" aria-label="Kick">
-        <img src="Assets/kick-icon.png" alt="" aria-hidden="true" class="social-image" />
-      </a>
-      <a class="social-btn rumble" href="https://rumble.com" target="_blank" rel="noopener noreferrer" aria-label="Rumble">
-        <img src="Assets/rumble-branding.png" alt="" aria-hidden="true" class="social-image social-image-rumble" />
-      </a>
-     </div>
-    </section>
-
-    <section class="card-grid">
-      <article class="glass reveal" id="streams">
-        <h3>Streams</h3>
-        <p>Uncensored live streams, raw commentary, and the fight for Christ and Truth in real time.</p>
-        <br>
-        <p>Kick-first streaming with all videos archived on Rumble.</p>
-      </article>
-      <article class="glass reveal" id="posts">
-        <h3>Posts</h3>
-        <p>Goy-to-goy golden nuggets: sharp posts, memes, and truth bombs that cut through the noise.</p>
-        <br>
-        <p>Informative Reels on Instagram and text-first posts on X</p>
-      </article>
-      <article class="glass reveal" id="shop">
-        <h3>Exclusive</h3>
-        <p>Get exclusive access to a private Telegram chat with Forza and members-only content.</p>
-        <br>
-        <p>Direct updates, uncensored discussion threads, and behind-the-scenes drops for dedicated supporters.</p>
-        <div class="profile-actions">
-          <a href="exclusive.html" class="btn primary">View Membership</a>
-        </div>
-      </article>
-    </section>
-  </main>
+  <main id="app-root"></main>
 
   <footer class="site-footer">
     <section class="glass site-footer-shell">
@@ -113,6 +47,7 @@
     </section>
   </footer>
 
-  <script src="script.js?v=20260302-social-profiles"></script>
+  <script src="script.js?v=20260312-spa-shared"></script>
+  <script src="app.js?v=20260312-spa-router"></script>
 </body>
 </html>

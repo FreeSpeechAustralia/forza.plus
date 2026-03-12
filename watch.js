@@ -1,11 +1,7 @@
-const navToggle = document.querySelector('.nav-toggle');
-const nav = document.querySelector('.header-nav');
 const sortSelect = document.getElementById('sortSelect');
 const sortPanel = document.querySelector('.sort-panel');
 const videoGrid = document.getElementById('videoGrid');
 const videoCount = document.getElementById('videoCount');
-const canvas = document.getElementById('nebula-canvas');
-const ctx = canvas ? canvas.getContext('2d') : null;
 
 const videos = [];
 
@@ -54,6 +50,8 @@ function videoPlaceholder() {
 }
 
 function renderVideos(mode = 'latest') {
+  if (!videoGrid) return;
+
   const sortedVideos = sortVideos(mode);
 
   if (sortedVideos.length === 0) {
@@ -74,48 +72,6 @@ if (sortSelect) {
   sortSelect.addEventListener('change', (event) => {
     renderVideos(event.target.value);
   });
-}
-
-if (navToggle) {
-  navToggle.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    navToggle.setAttribute('aria-expanded', String(open));
-  });
-}
-
-if (canvas && ctx) {
-  const stars = Array.from({ length: 70 }, () => ({
-    x: Math.random(),
-    y: Math.random(),
-    r: Math.random() * 1.7 + 0.4,
-    o: Math.random() * 0.6 + 0.2,
-    v: Math.random() * 0.0007 + 0.0002,
-  }));
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    stars.forEach((star) => {
-      star.y += star.v;
-      if (star.y > 1.02) star.y = -0.02;
-
-      ctx.beginPath();
-      ctx.arc(star.x * canvas.width, star.y * canvas.height, star.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(183, 222, 255, ${star.o})`;
-      ctx.fill();
-    });
-
-    requestAnimationFrame(drawStars);
-  }
-
-  resizeCanvas();
-  drawStars();
-  window.addEventListener('resize', resizeCanvas);
 }
 
 renderVideos('latest');
