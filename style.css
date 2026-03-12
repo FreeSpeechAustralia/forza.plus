@@ -1351,10 +1351,6 @@ h1 {
   gap: 0.9rem;
 }
 
-.accounts-main section .account-panel + .account-panel {
-  margin-top: 0.9rem;
-}
-
 .account-panel {
   padding: 1.1rem;
 }
