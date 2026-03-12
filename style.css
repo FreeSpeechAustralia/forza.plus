@@ -153,9 +153,13 @@ main {
   margin: 1.4rem auto 1.6rem;
 }
 
-#app-root > section[data-route-page] {
+#app-root > section[data-route-page]:not([hidden]) {
   display: grid;
   gap: 0.9rem;
+}
+
+#app-root > section[data-route-page][hidden] {
+  display: none;
 }
 
 .streams-main {
