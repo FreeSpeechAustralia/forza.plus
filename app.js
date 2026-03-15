@@ -112,8 +112,17 @@ function applyRouteFrame(route) {
   }
 }
 
+function revealRouteContent(container) {
+  if (!container) return;
+  const revealEls = container.querySelectorAll('.reveal');
+  revealEls.forEach((item) => {
+    item.classList.add('visible');
+  });
+}
+
 function safeHydrate(container) {
   if (!window.ForzaShared || typeof window.ForzaShared.hydrate !== 'function') {
+    revealRouteContent(container);
     return;
   }
 
@@ -121,10 +130,7 @@ function safeHydrate(container) {
     window.ForzaShared.hydrate(container);
   } catch (error) {
     console.error('Route hydration failed.', error);
-    const revealEls = container ? container.querySelectorAll('.reveal') : [];
-    revealEls.forEach((item) => {
-      item.classList.add('visible');
-    });
+    revealRouteContent(container);
   }
 }
 
