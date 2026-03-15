@@ -166,8 +166,6 @@ async function loadRouteContainer(route) {
     await loadScriptOnce(route.scriptPath);
   }
 
-  safeHydrate(container);
-
   return container;
 }
 
