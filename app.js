@@ -112,6 +112,22 @@ function applyRouteFrame(route) {
   }
 }
 
+function safeHydrate(container) {
+  if (!window.ForzaShared || typeof window.ForzaShared.hydrate !== 'function') {
+    return;
+  }
+
+  try {
+    window.ForzaShared.hydrate(container);
+  } catch (error) {
+    console.error('Route hydration failed.', error);
+    const revealEls = container ? container.querySelectorAll('.reveal') : [];
+    revealEls.forEach((item) => {
+      item.classList.add('visible');
+    });
+  }
+}
+
 async function loadScriptOnce(scriptPath) {
   if (!scriptPath || loadedScripts.has(scriptPath)) return;
 
@@ -150,9 +166,7 @@ async function loadRouteContainer(route) {
     await loadScriptOnce(route.scriptPath);
   }
 
-  if (window.ForzaShared && typeof window.ForzaShared.hydrate === 'function') {
-    window.ForzaShared.hydrate(container);
-  }
+  safeHydrate(container);
 
   return container;
 }
@@ -187,9 +201,7 @@ function showNotFound(pathname) {
   `;
   notFoundContainer.hidden = false;
 
-  if (window.ForzaShared && typeof window.ForzaShared.hydrate === 'function') {
-    window.ForzaShared.hydrate(notFoundContainer);
-  }
+  safeHydrate(notFoundContainer);
 
   applyRouteFrame(notFoundRoute);
 }
@@ -213,9 +225,7 @@ async function renderCurrentRoute() {
     container.hidden = false;
     applyRouteFrame(route);
 
-    if (window.ForzaShared && typeof window.ForzaShared.hydrate === 'function') {
-      window.ForzaShared.hydrate(container);
-    }
+    safeHydrate(container);
   } catch (error) {
     console.error(error);
     showNotFound(normalizedPath);

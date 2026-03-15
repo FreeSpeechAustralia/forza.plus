@@ -45,23 +45,42 @@ let ctx = null;
 let io = null;
 let socialProfilesPromise = null;
 let canvasStarted = false;
+let revealFallbackMode = false;
 
 function initRevealObserver() {
-  if (io) return;
+  if (io || revealFallbackMode) return;
+  if (typeof window.IntersectionObserver !== 'function') {
+    revealFallbackMode = true;
+    return;
+  }
 
-  io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.18 });
+  try {
+    io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.18 });
+  } catch (error) {
+    revealFallbackMode = true;
+    console.warn('Reveal observer unavailable, using immediate reveal fallback.', error);
+  }
 }
 
 function observeRevealElements(root = document) {
-  initRevealObserver();
   const revealEls = root.querySelectorAll('.reveal');
+  if (!revealEls.length) return;
+
+  initRevealObserver();
+  if (!io || revealFallbackMode) {
+    revealEls.forEach((item) => {
+      item.classList.add('visible');
+    });
+    return;
+  }
+
   revealEls.forEach((item) => {
     if (item.classList.contains('visible')) return;
     io.observe(item);
