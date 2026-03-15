@@ -38,6 +38,8 @@ function setCheckoutLoading(isLoading) {
 }
 
 async function requestCheckoutSession(token) {
+  const successUrl = `${window.location.origin}/accounts?stripe=success&session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${window.location.origin}/accounts?stripe=cancel`;
   const response = await fetch(`${API_BASE_URL}/api/v1/stripe/checkout-session`, {
     method: 'POST',
     headers: {
@@ -47,6 +49,8 @@ async function requestCheckoutSession(token) {
     body: JSON.stringify({
       tier: STRIPE_MEMBERSHIP_TIER,
       creatorSlug: STRIPE_CREATOR_SLUG,
+      successUrl,
+      cancelUrl,
     }),
   });
 

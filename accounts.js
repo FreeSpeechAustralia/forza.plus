@@ -334,11 +334,15 @@ async function startMembershipCheckout() {
   setCheckoutButtonLoading(true);
 
   try {
+    const successUrl = `${window.location.origin}/accounts?stripe=success&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${window.location.origin}/accounts?stripe=cancel`;
     const payload = await requestJson('/api/v1/stripe/checkout-session', {
       method: 'POST',
       body: {
         tier: STRIPE_MEMBERSHIP_TIER,
         creatorSlug: STRIPE_CREATOR_SLUG,
+        successUrl,
+        cancelUrl,
       },
     });
 

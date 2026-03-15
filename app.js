@@ -29,7 +29,7 @@ const ROUTES = {
     title: 'Forza | Exclusive',
     fragmentPath: '/fragments/exclusive.html?v=20260312-spa',
     mainClass: 'exclusive-main',
-    scriptPath: '/exclusive.js?v=20260312-spa-route',
+    scriptPath: '/exclusive.js?v=20260315-stripe-return-fix',
   },
   '/donate': {
     key: 'donate',
@@ -44,12 +44,20 @@ const ROUTES = {
     title: 'Forza | Accounts',
     fragmentPath: '/fragments/accounts.html?v=20260312-spa',
     mainClass: 'accounts-main',
-    scriptPath: '/accounts.js?v=20260312-spa-route',
+    scriptPath: '/accounts.js?v=20260315-stripe-return-fix',
   },
 };
 
 const routeContainers = new Map();
 const loadedScripts = new Set();
+const LEGACY_PATH_ALIASES = {
+  '/index.html': '/',
+  '/watch.html': '/watch',
+  '/posts.html': '/posts',
+  '/exclusive.html': '/exclusive',
+  '/donate.html': '/donate',
+  '/accounts.html': '/accounts',
+};
 const notFoundRoute = {
   title: 'Forza | Not Found',
   mainClass: '',
@@ -61,7 +69,7 @@ function normalizePath(pathname) {
 
   const cleaned = pathname.replace(/\/+$/, '');
   if (!cleaned) return '/';
-  if (cleaned === '/index.html') return '/';
+  if (LEGACY_PATH_ALIASES[cleaned]) return LEGACY_PATH_ALIASES[cleaned];
   return cleaned;
 }
 
